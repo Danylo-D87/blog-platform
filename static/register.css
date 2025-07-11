@@ -1,0 +1,84 @@
+/* Styling for the registration page container */
+.register-page-container {
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+/* Card styling for the form */
+.register-page-container .card {
+    border: none;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.register-page-container .card-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #343a40;
+}
+
+/* Form field styling */
+.register-form .form-label {
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 5px;
+}
+
+.register-form .form-control {
+    border-radius: 5px;
+    padding: 10px 12px;
+    font-size: 1rem;
+    border: 1px solid #ced4da;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.register-form .form-control:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Styling for validation errors */
+.register-form .invalid-feedback {
+    font-size: 0.875rem;
+    color: #dc3545;
+    margin-top: 5px;
+}
+
+/* Button styling */
+.register-form .btn-primary {
+    background-color: #007bff; /* Bootstrap primary blue */
+    border-color: #007bff;
+    color: white;
+    padding: 12px 25px;
+    font-size: 1.1rem;
+    border-radius: 5px;
+    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.register-form .btn-primary:hover {
+    background-color: #0069d9;
+    border-color: #0062cc;
+}
+
+/* Link to login page */
+.register-page-container p.text-center a {
+    font-weight: 500;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.register-page-container p.text-center a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .register-page-container {
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+    .register-page-container .card {
+        margin: 0 15px;
+    }
+}

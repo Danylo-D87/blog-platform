@@ -1,0 +1,113 @@
+/* articles/static/css/article_form.css */
+
+.article-form-page {
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+
+.page-title {
+    color: #007bff;
+    font-weight: 600;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.article-form {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08);
+}
+
+.form-label {
+    font-weight: 500;
+    color: #343a40;
+}
+
+/* Стилі для поля input[type="file"] */
+input[type="file"].form-control {
+    padding: 0.375rem 0.75rem; /* Зменшимо відступи для файлового поля */
+    height: auto; /* Дозволимо висоті адаптуватися */
+}
+
+/* Стилізація секції фотографій */
+h3 {
+    color: #007bff;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 10px;
+}
+
+.photo-formset-row {
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+}
+
+.current-photo-preview {
+    max-width: 120px; /* Обмеження ширини прев'ю */
+    height: auto;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+}
+
+/* Стилі для чекбоксу "Clear" */
+.image-input-wrapper {
+    display: flex; /* Використовуємо flexbox для вирівнювання */
+    flex-wrap: wrap; /* Дозволяє елементам переноситись на новий рядок */
+    align-items: center; /* Вирівнювання по центру вертикалі */
+    gap: 10px; /* Відстань між елементами */
+}
+
+.image-input-wrapper input[type="file"] {
+    flex-grow: 1; /* Дозволити полю займати доступний простір */
+    min-width: 150px; /* Мінімальна ширина для поля файлу */
+}
+
+.image-clear-checkbox-wrapper {
+    /* Можна додати додаткові стилі для розташування Clear */
+    margin-left: 0 !important; /* Перевизначити Bootstrap маргіни */
+}
+
+
+/* Кнопки */
+.add-photo-btn, .save-article-btn, .cancel-btn {
+    padding: 10px 25px;
+    font-size: 1rem;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.add-photo-btn {
+    background-color: #17a2b8; /* Info blue */
+    border-color: #17a2b8;
+    color: white;
+}
+.add-photo-btn:hover {
+    background-color: #138496;
+    border-color: #117a8b;
+}
+
+.save-article-btn {
+    background-color: #28a745; /* Success green */
+    border-color: #28a745;
+}
+.save-article-btn:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+.cancel-btn {
+    background-color: #6c757d; /* Secondary gray */
+    border-color: #6c757d;
+    color: white;
+}
+.cancel-btn:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+}
+
+.hidden-delete-checkbox {
+    display: none;
+}
