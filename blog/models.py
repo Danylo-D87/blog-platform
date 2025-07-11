@@ -17,13 +17,19 @@ class Article(models.Model):
     def __str__(self):
         return self.title
 
+    def get_first_image(self):
+        for photo in self.images.all():
+            if photo.image:
+                return photo
+        return None
+
     class Meta:
         ordering = ["-created_at"]
 
 
 class Photo(models.Model):
     article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name="images")
-    image = models.ImageField(upload_to="article_photos")
+    image = models.ImageField(upload_to="article_photos", blank=True)
 
     def __str__(self):
         return f"Photo for article: {self.article.title}"

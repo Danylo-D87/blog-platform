@@ -1,16 +1,32 @@
 {% extends 'base.html' %}
+{% load static %} {# Не забудьте завантажити тег static #}
 
 {% block title %}Видалити статтю{% endblock %}
 
-{% block content %}
-    <div class="container mt-4">
-        <h1>Видалити статтю</h1>
-        <p>Ви впевнені, що хочете видалити статтю "{{ article.title }}"?</p>
+{% block extra_css %} {# Підключаємо унікальний CSS для цієї сторінки #}
+    <link rel="stylesheet" href="{% static 'css/article_confirm_delete.css' %}">
+{% endblock %}
 
-        <form method="post">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger">Так, видалити</button>
-            <a href="{% url 'article_detail' article.pk %}" class="btn btn-secondary">Скасувати</a>
-        </form>
+{% block content %}
+    <div class="container mt-4 delete-confirmation-page"> {# Додамо клас для унікальних стилів сторінки #}
+        <div class="card delete-card shadow-sm">
+            <div class="card-body text-center">
+                <h1 class="card-title delete-title mb-4">Видалити статтю</h1>
+                <p class="delete-message lead mb-4">
+                    Ви впевнені, що хочете видалити статтю "<strong class="text-danger">{{ article.title }}</strong>"?
+                    Цю дію **неможливо буде скасувати**.
+                </p>
+
+                <form method="post" class="delete-form d-inline-block"> {# Форма для кнопок #}
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-lg me-3 delete-confirm-btn">
+                        <i class="bi bi-trash-fill"></i> Так, видалити
+                    </button>
+                    <a href="{% url 'article_detail' article.pk %}" class="btn btn-secondary btn-lg delete-cancel-btn">
+                        Скасувати
+                    </a>
+                </form>
+            </div>
+        </div>
     </div>
 {% endblock %}

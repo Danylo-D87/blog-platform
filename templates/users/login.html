@@ -1,12 +1,50 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Вхід{% endblock %}
+{% block title %}Вхід на сайт{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static "css/login.css" %}">
+{% endblock %}
 
 {% block content %}
-<h2>Вхід</h2>
-<form method="post" novalidate>
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit" class="btn btn-success">Увійти</button>
-</form>
+    <div class="container login-page-container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <h2 class="card-title text-center mb-4">Увійти</h2>
+                        <form method="post" novalidate class="login-form">
+                            {% csrf_token %}
+                            {% for field in form %}
+                                <div class="mb-3">
+                                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                                    {{ field }}
+                                    {% if field.help_text %}
+                                        <div class="form-text text-muted">{{ field.help_text }}</div>
+                                    {% endif %}
+                                    {% for error in field.errors %}
+                                        <div class="invalid-feedback d-block">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
+                            {% if form.non_field_errors %}
+                                <div class="alert alert-danger mb-3" role="alert">
+                                    {% for error in form.non_field_errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-success btn-lg mt-3">Увійти</button>
+                            </div>
+                        </form>
+                        <p class="text-center mt-3 mb-0">
+                            Ще не маєте облікового запису? <a href="{% url 'register' %}">Зареєструватися</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

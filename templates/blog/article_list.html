@@ -1,32 +1,53 @@
-{% extends 'base.html' %} {# Припускається, що у вас є базовий шаблон #}
+{% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Всі статті{% endblock %}
 
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/article_list.css' %}">
+{% endblock %}
+
 {% block content %}
-    <div class="container mt-4">
-        <h1>Наші Статті</h1>
+    <div class="container mt-4 article-list-page">
+        <h1 class="page-title">Наші Статті</h1>
         {% if user.is_authenticated %}
-            <p><a href="{% url 'article_create' %}" class="btn btn-primary mb-3">Створити нову статтю</a></p>
+            <p class="text-center mb-4">
+                <a href="{% url 'article_create' %}" class="btn btn-primary create-article-btn">Створити нову статтю</a>
+            </p>
         {% endif %}
 
         {% if articles %}
-            <div class="list-group">
+            <div class="row">
                 {% for article in articles %}
-                    <a href="{% url 'article_detail' article.pk %}" class="list-group-item list-group-item-action mb-3">
-                        <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1">{{ article.title }}</h5>
-                            <small class="text-muted">{{ article.created_at|date:"d.m.Y" }}</small>
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card article-card h-100 shadow-sm">
+                            <a href="{% url 'article_detail' article.pk %}" class="text-decoration-none text-dark">
+                                {# *** Зміни тут: Використовуємо новий метод моделі *** #}
+                                {% with displayed_image=article.get_first_image %}
+                                    {% if displayed_image %}
+                                        <img src="{{ displayed_image.image.url }}" class="card-img-top article-image" alt="{{ article.title }}">
+                                    {% else %}
+                                        <div class="article-image-placeholder d-flex align-items-center justify-content-center bg-light text-muted">
+                                            Без фото
+                                        </div>
+                                    {% endif %}
+                                {% endwith %}
+                                {# *** Кінець змін для відображення фото *** #}
+
+                                <div class="card-body">
+                                    <h5 class="card-title article-title">{{ article.title }}</h5>
+                                    <p class="card-text article-excerpt">{{ article.content|truncatechars:100 }}</p>
+                                </div>
+                            </a>
+                            <div class="card-footer bg-white border-top-0 d-flex justify-content-between align-items-center">
+                                <small class="text-muted">Автор: <strong>{{ article.author.username }}</strong></small>
+                                <small class="text-muted">{{ article.created_at|date:"d.m.Y" }}</small>
+                            </div>
                         </div>
-                        {% if article.images.first %}
-                            <img src="{{ article.images.first.image.url }}" class="img-fluid rounded my-2" alt="{{ article.title }}" style="max-height: 150px; object-fit: cover; width: 100%;">
-                        {% endif %}
-                        <p class="mb-1">{{ article.content|truncatechars:100 }}</p> {# Обрізаємо зміст до 200 символів #}
-                        <small>Автор: {{ article.author.username }}</small>
-                    </a>
+                    </div>
                 {% endfor %}
             </div>
 
-            {# Пагінація залишається, якщо ви її використовуєте #}
             {% if is_paginated %}
                 <nav aria-label="Page navigation" class="mt-4">
                     <ul class="pagination justify-content-center">
@@ -48,7 +69,7 @@
             {% endif %}
 
         {% else %}
-            <p>Статей поки що немає.</p>
+            <p class="text-center alert alert-info">Статей поки що немає. Будьте першим, хто створить!</p>
         {% endif %}
     </div>
 {% endblock %}
