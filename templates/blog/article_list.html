@@ -1,15 +1,54 @@
-{% extends 'base.html' %}
-{% block title %}Список статей{% endblock %}
+{% extends 'base.html' %} {# Припускається, що у вас є базовий шаблон #}
+
+{% block title %}Всі статті{% endblock %}
+
 {% block content %}
-<h2>Статті</h2>
-<ul class="list-group">
-  {% for article in articles %}
-    <li class="list-group-item">
-      <a href="{% url 'article_detail' article.pk %}">{{ article.title }}</a><br/>
-      <small>Автор: {{ article.author.username }}, {{ article.created_at|date:"d.m.Y H:i" }}</small>
-    </li>
-  {% empty %}
-    <p>Статей поки немає.</p>
-  {% endfor %}
-</ul>
+    <div class="container mt-4">
+        <h1>Наші Статті</h1>
+        {% if user.is_authenticated %}
+            <p><a href="{% url 'article_create' %}" class="btn btn-primary mb-3">Створити нову статтю</a></p>
+        {% endif %}
+
+        {% if articles %}
+            <div class="list-group">
+                {% for article in articles %}
+                    <a href="{% url 'article_detail' article.pk %}" class="list-group-item list-group-item-action mb-3">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">{{ article.title }}</h5>
+                            <small class="text-muted">{{ article.created_at|date:"d.m.Y" }}</small>
+                        </div>
+                        {% if article.images.first %}
+                            <img src="{{ article.images.first.image.url }}" class="img-fluid rounded my-2" alt="{{ article.title }}" style="max-height: 150px; object-fit: cover; width: 100%;">
+                        {% endif %}
+                        <p class="mb-1">{{ article.content|truncatechars:100 }}</p> {# Обрізаємо зміст до 200 символів #}
+                        <small>Автор: {{ article.author.username }}</small>
+                    </a>
+                {% endfor %}
+            </div>
+
+            {# Пагінація залишається, якщо ви її використовуєте #}
+            {% if is_paginated %}
+                <nav aria-label="Page navigation" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Попередня</a></li>
+                        {% endif %}
+                        {% for i in paginator.page_range %}
+                            {% if page_obj.number == i %}
+                                <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+                            {% else %}
+                                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                        {% if page_obj.has_next %}
+                            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Наступна</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+
+        {% else %}
+            <p>Статей поки що немає.</p>
+        {% endif %}
+    </div>
 {% endblock %}
