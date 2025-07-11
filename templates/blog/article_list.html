@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Список статей{% endblock %}
+{% block content %}
+<h2>Статті</h2>
+<ul class="list-group">
+  {% for article in articles %}
+    <li class="list-group-item">
+      <a href="{% url 'article_detail' article.pk %}">{{ article.title }}</a><br/>
+      <small>Автор: {{ article.author.username }}, {{ article.created_at|date:"d.m.Y H:i" }}</small>
+    </li>
+  {% empty %}
+    <p>Статей поки немає.</p>
+  {% endfor %}
+</ul>
+{% endblock %}
