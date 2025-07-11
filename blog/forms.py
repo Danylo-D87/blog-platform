@@ -4,9 +4,16 @@ from .models import Article, Photo
 
 
 class ArticleForm(forms.ModelForm):
+    prompt = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={"placeholder": "Запит для генерації тексту..."}),
+        label="Prompt для генерації контенту"
+    )
+
     class Meta:
         model = Article
         fields = ['title', 'content']
+
 
 
 class PhotoForm(forms.ModelForm):
