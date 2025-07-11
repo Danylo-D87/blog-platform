@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+*.db
+
+# Environments
+.env
+.venv/
+.venv
+venv/
+ENV/
+env/
+
+# Django
+*.sqlite3
+media/
+staticfiles/
+
+# VSCode / IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Migrations (опціонально, залишати тільки готові)
+**/migrations/*.pyc
+**/migrations/__pycache__/
+# **/migrations/ — якщо хочеш вручну контролювати які комітиш
+
+# Coverage / Testing
+htmlcov/
+.coverage
+.tox/
+pytest_cache/
+
+# Docker
+*.pid
+*.seed
+*.bak
+
+# Node (якщо буде фронт)
+node_modules/
+dist/
+build/
