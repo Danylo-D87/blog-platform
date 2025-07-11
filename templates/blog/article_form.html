@@ -1,76 +1,204 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}
     {% if article %}Редагувати статтю{% else %}Створити статтю{% endif %}
 {% endblock %}
 
-{% block content %}
-    <div class="container mt-4">
-        <h1>{% if article %}Редагувати статтю{% else %}Створити статтю{% endif %}</h1>
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/article_form.css' %}">
+{% endblock %}
 
-        <form method="post" enctype="multipart/form-data">
+{% block content %}
+    <div class="container mt-4 article-form-page">
+        <h1 class="page-title">{% if article %}Редагувати статтю{% else %}Створити нову статтю{% endif %}</h1>
+
+        <form method="post" enctype="multipart/form-data" class="article-form">
             {% csrf_token %}
 
-            {{ form.as_p }} {# Форма для Article: title, content #}
+            {% for field in form %}
+                <div class="mb-3">
+                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <div class="form-text">{{ field.help_text }}</div>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <div class="alert alert-danger mt-1">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
 
-            <h3>Фотографії:</h3>
+            <h3 class="mt-4 mb-3">Фотографії:</h3>
             {# Management form є обов'язковою для inlineformset #}
             {{ photo_formset.management_form }}
             <div id="photo-formset-container">
-                {% for form in photo_formset %}
-                    <div class="photo-formset-row mb-3 p-3 border rounded">
-                        {{ form.as_p }}
-                        {% if form.instance.pk %} {# Якщо це існуюче фото, показуємо його #}
-                            <p>Поточне фото: <img src="{{ form.instance.image.url }}" style="max-width: 100px; height: auto;"></p>
-                        {% endif %}
-                        {% if photo_formset.can_delete %}
-                            <div class="form-check">
-                                {# Поле для видалення фото. Його назва буде __DELETE__ #}
-                                {{ form.DELETE }}
-                                <label class="form-check-label" for="{{ form.DELETE.id_for_label }}">Видалити</label>
+                {# Існуючі форми фотографій та форми, створені за рахунок 'extra' #}
+                {# Якщо PhotoFormSet має extra > 0, вони також з'являться тут #}
+                {% for photo_form in photo_formset %}
+                    {# Ця умова перевіряє, чи це НЕ порожня форма-шаблон, яку ми рендеримо окремо #}
+                    {# Вона потрібна, якщо у вас `extra > 0` в формсеті і Django рендерить порожні форми. #}
+                    {# Якщо ви використовуєте `extra=0` і `photo_formset.empty_form`, то цей `if` не потрібен. #}
+                    {# Проте, безпечніше залишити його, щоб уникнути подвійного рендерингу порожньої форми, якщо `extra > 0`. #}
+                    {% if photo_form.instance.pk or photo_form.is_bound %} {# photo_form.is_bound перевіряє, чи це не "порожня" форма, а та, що вже заповнена/пов'язана #}
+                        <div class="photo-formset-row mb-4 p-3 border rounded bg-light">
+                            {# Додаємо приховані поля ID та ORDER тут #}
+                            {{ photo_form.id }}
+                            {{ photo_form.ORDER }}
+
+                            <div class="row g-3 align-items-center">
+                                <div class="col-md-{% if photo_form.instance.pk and photo_form.instance.image %}6{% else %}12{% endif %}">
+                                    <label for="{{ photo_form.image.id_for_label }}" class="form-label">
+                                        {% if photo_form.instance.pk %}Змінити фото:{% else %}Додати фото:{% endif %}
+                                    </label>
+                                    <div class="image-input-wrapper">
+                                        {{ photo_form.image }}
+                                        {# Показуємо чекбокс "Очистити" тільки якщо є існуючий файл #}
+                                        {% if photo_form.instance.pk and photo_form.instance.image %}
+                                            <div class="form-check form-check-inline image-clear-checkbox-wrapper">
+                                                {{ photo_form.image.clear_field }}
+                                                <label for="{{ photo_form.image.clear_field.id_for_label }}" class="form-check-label">Очистити</label>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    {% for error in photo_form.image.errors %}
+                                        <div class="alert alert-danger mt-1">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                                {% if photo_form.instance.pk and photo_form.instance.image %}
+                                    <div class="col-md-4 text-center">
+                                        <p class="mb-1 text-muted">Поточне фото:</p>
+                                        <img src="{{ photo_form.instance.image.url }}" class="img-thumbnail current-photo-preview" alt="Поточне фото">
+                                    </div>
+                                {% endif %}
+                                <div class="hidden-delete-checkbox" style="display:none;">
+                                    {{ photo_form.DELETE }}
+                                    <label for="{{ photo_form.DELETE.id_for_label }}">Видалити цей рядок</label>
+                                </div>
                             </div>
-                        {% endif %}
-                    </div>
+                            {% if photo_form.non_field_errors %}
+                                <div class="alert alert-danger mt-2">
+                                    {% for error in photo_form.non_field_errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endif %}
                 {% endfor %}
+
+                {# *** ЦЕ КРИТИЧНО ВАЖЛИВИЙ БЛОК: Завжди рендеримо порожній шаблон форми для JavaScript клонування *** #}
+                {# Ця форма залишається прихованою і використовується як джерело для нових форм. #}
+                <div class="photo-formset-row mb-4 p-3 border rounded bg-light empty-form-template" style="display: none;">
+                    {{ photo_formset.empty_form.id }}
+                    {{ photo_formset.empty_form.ORDER }} {# Якщо ви використовуєте 'order' поле #}
+                    {{ photo_formset.empty_form.DELETE }} {# DELETE завжди потрібен для нових форм #}
+
+                    <div class="row g-3 align-items-center">
+                        <div class="col-md-12"> {# Для нових форм завжди 12 колонок #}
+                            <label for="{{ photo_formset.empty_form.image.id_for_label }}" class="form-label">Додати фото:</label>
+                            <div class="image-input-wrapper">
+                                {{ photo_formset.empty_form.image }}
+                                {# Для empty_form не потрібен ClearableFileInput чи попередній перегляд існуючого фото #}
+                            </div>
+                            {# Помилки для empty_form не рендеримо, їх покаже потім Django при сабміті #}
+                        </div>
+                    </div>
+                </div>
+                {# *** Кінець критично важливого блоку *** #}
+
             </div>
-            <button type="button" id="add-photo-button" class="btn btn-secondary btn-sm mt-2">Додати ще фото</button>
+            <button type="button" id="add-photo-button" class="btn btn-info btn-sm mt-2 add-photo-btn">Додати ще фото</button>
 
-            <hr>
+            <hr class="my-4">
 
-            <button type="submit" class="btn btn-success mt-3">Зберегти статтю</button>
-            <a href="{% url 'article_list' %}" class="btn btn-secondary mt-3">Скасувати</a>
+            <button type="submit" class="btn btn-success mt-3 save-article-btn">Зберегти статтю</button>
+            <a href="{% url 'article_list' %}" class="btn btn-secondary mt-3 cancel-btn">Скасувати</a>
         </form>
     </div>
 
-
-    {# jQuery для динамічного додавання полів фото #}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
         $(document).ready(function() {
-            $('#add-photo-button').click(function() {
-                // Отримуємо поточну кількість форм у формсеті
-                var formCount = $('#id_images-TOTAL_FORMS').val();
+            // Додаємо Bootstrap клас form-control до полів
+            $('input[type="text"], textarea').addClass('form-control');
+            $('input[type="file"]').addClass('form-control');
 
-                // Клонуємо першу форму з формсету (або останню, якщо вона має потрібну структуру)
-                // true означає, що клонуємо також обробники подій та дані
-                var newForm = $('.photo-formset-row:first').clone(true);
-
-                // Оновлюємо атрибути name та id для нових полів
-                // Це дозволяє Django розпізнати їх як нові елементи формсету
-                newForm.find(':input').each(function() {
-                    var name = $(this).attr('name').replace('-0-', '-' + formCount + '-');
-                    var id = 'id_' + name;
-                    $(this).attr({'name': name, 'id': id}).val('').prop('checked', false); // Очищаємо значення та знімаємо прапорець "видалити"
+            // Функція для додавання логіки до форм фотографій (очищення файлу)
+            function addPhotoFormLogic(formElement) {
+                // Якщо завантажуємо новий файл, знімаємо прапорець "Очистити"
+                formElement.find('input[type="file"]').on('change', function() {
+                    var clearCheckbox = $(this).closest('.image-input-wrapper').find('input[type="checkbox"]');
+                    if ($(this).val()) {
+                        clearCheckbox.prop('checked', false);
+                    }
                 });
 
-                // Видаляємо зображення з клонованої форми, якщо воно було присутнє (при редагуванні)
+                // Якщо ставимо прапорець "Очистити", очищаємо поле файлу
+                formElement.find('.image-clear-checkbox-wrapper input[type="checkbox"]').on('change', function() {
+                    var fileInput = $(this).closest('.image-input-wrapper').find('input[type="file"]');
+                    if ($(this).is(':checked')) {
+                        fileInput.val('');
+                    }
+                });
+            }
+
+            // Застосовуємо логіку до всіх видимих (існуючих) форм при завантаженні сторінки
+            $('.photo-formset-row:not(.empty-form-template)').each(function() {
+                addPhotoFormLogic($(this));
+            });
+
+            // Обробник кліку на кнопку "Додати ще фото"
+            $('#add-photo-button').click(function() {
+                var formCount = $('#id_images-TOTAL_FORMS').val(); // Отримуємо поточну кількість форм
+
+                // Клонуємо прихований шаблон форми
+                var newForm = $('.empty-form-template').clone(true); // 'true' копіює також обробники подій
+
+                // Оновлюємо атрибути name та id для всіх полів у клонованій формі
+                newForm.find(':input').each(function() {
+                    var oldName = $(this).attr('name');
+                    var oldId = $(this).attr('id');
+
+                    // Замінюємо індекс '-__prefix__-' на поточний formCount
+                    // Перевіряємо, чи oldName/oldId існують, щоб уникнути помилок
+                    var newName = oldName ? oldName.replace('-__prefix__-', '-' + formCount + '-') : '';
+                    var newId = oldId ? oldId.replace('-__prefix__-', '-' + formCount + '-') : '';
+
+                    $(this).attr({'name': newName, 'id': newId});
+
+                    // Очищаємо значення полів для нової форми, крім прихованих полів управління
+                    if (!$(this).is('input[type="hidden"][name$="-id"]') &&
+                        !$(this).is('input[type="hidden"][name$="-DELETE"]') &&
+                        !$(this).is('input[type="hidden"][name$="-ORDER"]')) {
+
+                        $(this).val('').prop('checked', false); // Очищаємо значення та знімаємо прапорці
+                    }
+                    $(this).removeClass('is-invalid'); // Видаляємо класи помилок
+                });
+
+                // Видаляємо всі елементи, пов'язані з існуючим фото та чекбоксом "Clear" з клонованої форми
+                // (це потрібно, оскільки шаблон може містити їх для існуючих форм, якщо extra>0)
                 newForm.find('img').remove();
+                newForm.find('.current-photo-preview').remove();
+                newForm.find('.alert-danger').remove(); // Видаляємо помилки
+                newForm.find('.text-muted').remove(); // Видаляємо текст "Поточне фото"
+                newForm.find('.image-clear-checkbox-wrapper').remove(); // Видаляємо чекбокс очищення
+
+                // Робимо нову форму видимою
+                newForm.removeClass('empty-form-template').addClass('additional-form-added').show(); // Додаємо .show()
 
                 // Додаємо нову форму до контейнера
-                newForm.appendTo('#photo-formset-container');
+                $('#photo-formset-container').append(newForm);
 
-                // Збільшуємо загальну кількість форм у management_form
+                // Оновлюємо TOTAL_FORMS у management form
                 $('#id_images-TOTAL_FORMS').val(parseInt(formCount) + 1);
+
+                // Додаємо Bootstrap клас form-control до нового поля file
+                newForm.find('input[type="file"]').addClass('form-control');
+
+                // Застосовуємо логіку очищення/завантаження до нової форми
+                addPhotoFormLogic(newForm);
             });
         });
     </script>

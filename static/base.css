@@ -1,0 +1,32 @@
+/* Базові стилі для всього сайту */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa; /* Світло-сірий фон */
+}
+
+/* Приклад стилю для заголовків, якщо потрібно відрізнятися від Bootstrap */
+h1, h2, h3, h4, h5, h6 {
+    color: #343a40; /* Темно-сірий колір тексту */
+}
+
+/* Додаткові стилі для посилань */
+a {
+    text-decoration: none;
+    color: #007bff; /* Колір посилання Bootstrap Primary */
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Якщо потрібен якийсь відступ для контейнера */
+.container {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Приклад стилю для футера */
+footer {
+    border-top: 1px solid #e9ecef; /* Світла лінія зверху */
+    color: #6c757d; /* Сірий колір тексту футера */
+}
