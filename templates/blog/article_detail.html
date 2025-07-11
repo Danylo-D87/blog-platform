@@ -1,16 +1,42 @@
 {% extends 'base.html' %}
+
 {% block title %}{{ article.title }}{% endblock %}
+
 {% block content %}
-<h2>{{ article.title }}</h2>
-<p><i>Автор: {{ article.author.username }}, {{ article.created_at|date:"d.m.Y H:i" }}</i></p>
-<p>{{ article.content }}</p>
+    <div class="container mt-4">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title">{{ article.title }}</h1>
+                <p class="card-subtitle mb-2 text-muted">
+                    Автор: {{ article.author.username }} | Дата створення: {{ article.created_at|date:"d.m.Y H:i" }}
+                    {% if article.created_at != article.updated_at %}
+                        | Оновлено: {{ article.updated_at|date:"d.m.Y H:i" }}
+                    {% endif %}
+                </p>
+                <hr>
+                <div class="article-content">
+                    {{ article.content|linebreaksbr }}
+                </div>
 
-{% for img in article.images.all %}
-  <img src="{{ img.image.url }}" style="max-width:300px;" class="img-fluid my-2"/>
-{% endfor %}
+                {% if article.images.all %}
+                    <h5 class="mt-4">Фотографії:</h5>
+                    <div class="row">
+                        {% for photo in article.images.all %}
+                            <div class="col-md-4 mb-3">
+                                <img src="{{ photo.image.url }}" class="img-fluid rounded" alt="{{ article.title }}">
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
 
-{% if request.user == article.author %}
-  <a href="{% url 'article_update' article.pk %}" class="btn btn-sm btn-warning">Редагувати</a>
-  <a href="{% url 'article_delete' article.pk %}" class="btn btn-sm btn-danger">Видалити</a>
-{% endif %}
+                <div class="mt-4">
+                    <a href="{% url 'article_list' %}" class="btn btn-secondary">Назад до списку</a>
+                    {% if user.is_authenticated and user == article.author %}
+                        <a href="{% url 'article_edit' article.pk %}" class="btn btn-warning">Редагувати</a>
+                        <a href="{% url 'article_delete' article.pk %}" class="btn btn-danger">Видалити</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

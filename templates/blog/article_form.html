@@ -1,10 +1,77 @@
 {% extends 'base.html' %}
-{% block title %}Нова/Редагувати статтю{% endblock %}
+
+{% block title %}
+    {% if article %}Редагувати статтю{% else %}Створити статтю{% endif %}
+{% endblock %}
+
 {% block content %}
-<h2>{{ view.object.pk|yesno:"Редагувати,Створити" }} статтю</h2>
-<form method="post" enctype="multipart/form-data">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit" class="btn btn-primary">Зберегти</button>
-</form>
+    <div class="container mt-4">
+        <h1>{% if article %}Редагувати статтю{% else %}Створити статтю{% endif %}</h1>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {{ form.as_p }} {# Форма для Article: title, content #}
+
+            <h3>Фотографії:</h3>
+            {# Management form є обов'язковою для inlineformset #}
+            {{ photo_formset.management_form }}
+            <div id="photo-formset-container">
+                {% for form in photo_formset %}
+                    <div class="photo-formset-row mb-3 p-3 border rounded">
+                        {{ form.as_p }}
+                        {% if form.instance.pk %} {# Якщо це існуюче фото, показуємо його #}
+                            <p>Поточне фото: <img src="{{ form.instance.image.url }}" style="max-width: 100px; height: auto;"></p>
+                        {% endif %}
+                        {% if photo_formset.can_delete %}
+                            <div class="form-check">
+                                {# Поле для видалення фото. Його назва буде __DELETE__ #}
+                                {{ form.DELETE }}
+                                <label class="form-check-label" for="{{ form.DELETE.id_for_label }}">Видалити</label>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+            <button type="button" id="add-photo-button" class="btn btn-secondary btn-sm mt-2">Додати ще фото</button>
+
+            <hr>
+
+            <button type="submit" class="btn btn-success mt-3">Зберегти статтю</button>
+            <a href="{% url 'article_list' %}" class="btn btn-secondary mt-3">Скасувати</a>
+        </form>
+    </div>
+
+
+    {# jQuery для динамічного додавання полів фото #}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#add-photo-button').click(function() {
+                // Отримуємо поточну кількість форм у формсеті
+                var formCount = $('#id_images-TOTAL_FORMS').val();
+
+                // Клонуємо першу форму з формсету (або останню, якщо вона має потрібну структуру)
+                // true означає, що клонуємо також обробники подій та дані
+                var newForm = $('.photo-formset-row:first').clone(true);
+
+                // Оновлюємо атрибути name та id для нових полів
+                // Це дозволяє Django розпізнати їх як нові елементи формсету
+                newForm.find(':input').each(function() {
+                    var name = $(this).attr('name').replace('-0-', '-' + formCount + '-');
+                    var id = 'id_' + name;
+                    $(this).attr({'name': name, 'id': id}).val('').prop('checked', false); // Очищаємо значення та знімаємо прапорець "видалити"
+                });
+
+                // Видаляємо зображення з клонованої форми, якщо воно було присутнє (при редагуванні)
+                newForm.find('img').remove();
+
+                // Додаємо нову форму до контейнера
+                newForm.appendTo('#photo-formset-container');
+
+                // Збільшуємо загальну кількість форм у management_form
+                $('#id_images-TOTAL_FORMS').val(parseInt(formCount) + 1);
+            });
+        });
+    </script>
 {% endblock %}
