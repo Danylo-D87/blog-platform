@@ -12,6 +12,7 @@ from django.contrib.auth.mixins import (
 )
 from django.db import transaction
 
+from utils.openai_client import generate_article_content
 from .models import Article, Photo
 from .forms import ArticleForm, PhotoFormSet
 
@@ -20,7 +21,7 @@ class ArticleListView(ListView):
     model = Article
     template_name = "blog/article_list.html"
     context_object_name = "articles"
-    paginate_by = 10
+    paginate_by = 9
 
 
 class ArticleDetailView(DetailView):
@@ -50,6 +51,16 @@ class ArticleCreateView(LoginRequiredMixin, CreateView):
         form.instance.author = self.request.user
 
         if photo_formset.is_valid() and form.is_valid():
+
+            # AI
+            prompt = form.cleaned_data.get("prompt")
+            if prompt and not form.cleaned_data.get("content"):
+                try:
+                    form.instance.content = generate_article_content(prompt)
+                except Exception as e:
+                    form.add_error('prompt', f"Помилка генерації: {e}")
+                    return self.render_to_response(self.get_context_data(form=form))
+
             with transaction.atomic():
                 self.object = form.save()
                 photo_formset.instance = self.object
@@ -87,6 +98,16 @@ class ArticleUpdateView(
         photo_formset = context["photo_formset"]
 
         if photo_formset.is_valid() and form.is_valid():
+
+            # AI
+            prompt = form.cleaned_data.get("prompt")
+            if prompt and not form.cleaned_data.get("content"):
+                try:
+                    form.instance.content = generate_article_content(prompt)
+                except Exception as e:
+                    form.add_error('prompt', f"Помилка генерації: {e}")
+                    return self.render_to_response(self.get_context_data(form=form))
+
             with transaction.atomic():
                 self.object = form.save()
                 photo_formset.instance = self.object
