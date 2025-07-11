@@ -1,0 +1,107 @@
+/* articles/static/css/article_detail.css */
+
+.article-detail-page {
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+
+.article-detail-card {
+    border: none;
+    border-radius: 10px; /* Більш округлі кути для картки детальної статті */
+    background-color: #ffffff;
+}
+
+.article-detail-title {
+    font-size: 2.8rem; /* Більший заголовок */
+    color: #007bff; /* Колір Bootstrap primary */
+    margin-bottom: 0.5rem;
+    text-align: center;
+    font-weight: 700;
+}
+
+.article-meta {
+    font-size: 0.95rem;
+    text-align: center;
+    color: #6c757d;
+}
+
+.article-meta strong {
+    color: #343a40; /* Зробимо ім'я автора трохи темнішим */
+}
+
+.article-content {
+    line-height: 1.8; /* Збільшимо інтерліньяж для кращої читабельності */
+    color: #343a40;
+    text-align: justify; /* Вирівнювання по ширині */
+}
+
+.article-images-heading {
+    font-size: 1.6rem;
+    color: #007bff;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 10px;
+    margin-bottom: 25px !important;
+}
+
+.article-images-grid .col {
+    display: flex; /* Для вирівнювання зображень */
+    justify-content: center;
+}
+
+.article-image-thumbnail {
+    width: 100%;
+    height: 180px; /* Фіксована висота для мініатюр */
+    object-fit: cover;
+    border: 1px solid #dee2e6;
+    border-radius: 5px !important;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.image-link-wrapper {
+    display: block; /* Щоб посилання займало всю ширину */
+    line-height: 0; /* Прибираємо зайвий простір під зображенням */
+    border-radius: 5px;
+    overflow: hidden; /* Обрізаємо кути посилання */
+}
+
+.image-link-wrapper:hover .article-image-thumbnail {
+    transform: scale(1.05); /* Ефект збільшення при наведенні */
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
+}
+
+.article-actions .btn {
+    padding: 10px 25px;
+    font-size: 1rem;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.article-back-btn {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+}
+.article-back-btn:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+}
+
+.article-edit-btn {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #212529; /* Темний текст на жовтому фоні */
+}
+.article-edit-btn:hover {
+    background-color: #e0a800;
+    border-color: #d39e00;
+}
+
+.article-delete-btn {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+.article-delete-btn:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}

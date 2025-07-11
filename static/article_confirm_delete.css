@@ -1,0 +1,65 @@
+/* articles/static/css/article_confirm_delete.css */
+
+.delete-confirmation-page {
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+.delete-card {
+    max-width: 600px;
+    margin: 0 auto;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
+
+.delete-title {
+    font-size: 2.2rem;
+    color: #dc3545; /* Червоний колір для заголовка */
+    font-weight: 700;
+    margin-bottom: 25px;
+}
+
+.delete-message {
+    font-size: 1.2rem;
+    color: #495057;
+    line-height: 1.6;
+}
+
+.delete-message strong {
+    font-weight: 700;
+}
+
+.delete-confirm-btn {
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.delete-confirm-btn:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+
+.delete-confirm-btn i {
+    margin-right: 8px;
+}
+
+.delete-cancel-btn {
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.delete-cancel-btn:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+}
+
+/* Вирівнювання форми, якщо вона d-inline-block */
+.delete-form {
+    margin-top: 30px;
+}

@@ -1,39 +1,52 @@
 {% extends 'base.html' %}
+{% load static %} {# Не забудьте завантажити тег static #}
 
 {% block title %}{{ article.title }}{% endblock %}
 
+{% block extra_css %} {# Підключаємо унікальний CSS для цієї сторінки #}
+    <link rel="stylesheet" href="{% static 'css/article_detail.css' %}">
+{% endblock %}
+
 {% block content %}
-    <div class="container mt-4">
-        <div class="card">
+    <div class="container mt-4 article-detail-page"> {# Додамо клас для унікальних стилів сторінки #}
+        <div class="card article-detail-card shadow-sm">
             <div class="card-body">
-                <h1 class="card-title">{{ article.title }}</h1>
-                <p class="card-subtitle mb-2 text-muted">
-                    Автор: {{ article.author.username }} | Дата створення: {{ article.created_at|date:"d.m.Y H:i" }}
+                <h1 class="card-title article-detail-title">{{ article.title }}</h1>
+                <p class="card-subtitle mb-3 text-muted article-meta">
+                    Автор: <strong class="article-author">{{ article.author.username }}</strong> |
+                    Дата створення: <span class="article-date">{{ article.created_at|date:"d.m.Y H:i" }}</span>
                     {% if article.created_at != article.updated_at %}
-                        | Оновлено: {{ article.updated_at|date:"d.m.Y H:i" }}
+                        | Оновлено: <span class="article-date">{{ article.updated_at|date:"d.m.Y H:i" }}</span>
                     {% endif %}
                 </p>
-                <hr>
-                <div class="article-content">
+                <hr class="my-4">
+                <div class="article-content fs-5 mb-4"> {# Збільшимо розмір тексту контенту #}
                     {{ article.content|linebreaksbr }}
                 </div>
 
                 {% if article.images.all %}
-                    <h5 class="mt-4">Фотографії:</h5>
-                    <div class="row">
+                    <h5 class="mt-5 mb-3 article-images-heading">Галерея фотографій:</h5>
+                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 article-images-grid"> {# Використаємо сітку для галереї #}
                         {% for photo in article.images.all %}
-                            <div class="col-md-4 mb-3">
-                                <img src="{{ photo.image.url }}" class="img-fluid rounded" alt="{{ article.title }}">
-                            </div>
+                            {# *** Ось тут додаємо перевірку на наявність файлу *** #}
+                            {% if photo.image %}
+                                <div class="col">
+                                    <a href="{{ photo.image.url }}" target="_blank" class="d-block image-link-wrapper"> {# Додамо посилання на оригінальне фото #}
+                                        <img src="{{ photo.image.url }}" class="img-fluid rounded article-image-thumbnail" alt="{{ article.title }}">
+                                    </a>
+                                </div>
+                            {% endif %} {# Закриваємо if photo.image #}
                         {% endfor %}
                     </div>
                 {% endif %}
 
-                <div class="mt-4">
-                    <a href="{% url 'article_list' %}" class="btn btn-secondary">Назад до списку</a>
+                <hr class="my-4">
+
+                <div class="mt-4 article-actions">
+                    <a href="{% url 'article_list' %}" class="btn btn-secondary article-back-btn">Назад до списку</a>
                     {% if user.is_authenticated and user == article.author %}
-                        <a href="{% url 'article_edit' article.pk %}" class="btn btn-warning">Редагувати</a>
-                        <a href="{% url 'article_delete' article.pk %}" class="btn btn-danger">Видалити</a>
+                        <a href="{% url 'article_edit' article.pk %}" class="btn btn-warning article-edit-btn">Редагувати</a>
+                        <a href="{% url 'article_delete' article.pk %}" class="btn btn-danger article-delete-btn">Видалити</a>
                     {% endif %}
                 </div>
             </div>

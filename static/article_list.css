@@ -1,0 +1,97 @@
+/* articles/static/css/article_list.css */
+
+/* Стилі для сторінки списку статей */
+.article-list-page {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.page-title {
+    font-size: 2.5rem;
+    color: #0056b3; /* Більш глибокий синій */
+    margin-bottom: 30px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.create-article-btn {
+    padding: 10px 25px;
+    font-size: 1.1rem;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.create-article-btn:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+/* Стилі для кожної картки статті */
+.article-card {
+    border: none; /* Прибираємо стандартну рамку Bootstrap */
+    border-radius: 8px; /* Більш м'які кути */
+    overflow: hidden; /* Обрізає вміст, що виходить за межі */
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+.article-card:hover {
+    transform: translateY(-5px); /* Невеликий ефект підняття */
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important; /* Більш помітна тінь */
+}
+
+.article-card .card-img-top {
+    height: 180px; /* Фіксована висота для зображень */
+    object-fit: cover; /* Зображення заповнює простір, зберігаючи пропорції */
+    width: 100%;
+}
+
+.article-image-placeholder {
+    height: 180px;
+    background-color: #e9ecef;
+    color: #6c757d;
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+.article-card .card-body {
+    padding: 1rem 1.25rem;
+}
+
+.article-title {
+    font-size: 1.35rem;
+    color: #343a40;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+}
+
+.article-excerpt {
+    font-size: 0.95rem;
+    color: #555;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+}
+
+.card-footer {
+    padding: 0.75rem 1.25rem;
+    background-color: #f8f9fa !important; /* Легший фон для футера картки */
+    border-top: 1px solid #e9ecef !important;
+}
+
+/* Стилі для пагінації */
+.pagination .page-link {
+    border-radius: 5px;
+    margin: 0 3px;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+
+.pagination .page-item.active .page-link:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
